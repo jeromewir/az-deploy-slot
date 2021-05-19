@@ -118,6 +118,7 @@ export async function run({
     }
 
     core.setOutput("PUBLISH_PROFILE", publishProfile.toString());
+    core.setOutput("SLOT_NAME", slotName);
 
     // const ms: string = core.getInput('milliseconds')
     // core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true

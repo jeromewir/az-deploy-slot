@@ -117,8 +117,10 @@ export async function run({
       throw new Error(`Cannot retrieve publish profile`);
     }
 
-    core.setSecret("PUBLISH_PROFILE");
-    core.setOutput("PUBLISH_PROFILE", publishProfile.toString());
+    const publishProfileValue = publishProfile.toString();
+
+    core.setSecret(publishProfileValue);
+    core.setOutput("PUBLISH_PROFILE", publishProfileValue);
     core.setOutput("SLOT_NAME", slotName);
 
     // const ms: string = core.getInput('milliseconds')

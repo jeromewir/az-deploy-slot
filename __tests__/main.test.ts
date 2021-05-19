@@ -29,8 +29,9 @@ import { run } from "../src/run";
 //   console.log(cp.execFileSync(np, [ip], options).toString());
 // });
 
+jest.setTimeout(500000);
+
 test("Create", async () => {
-  jest.setTimeout(500000);
   let e: Error | undefined;
 
   await run({

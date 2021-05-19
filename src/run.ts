@@ -2,9 +2,13 @@ import * as core from "@actions/core";
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 import { WebSiteManagementClient } from "@azure/arm-appservice";
 import { GetParams } from "./commands/getParams";
+import {
+  WebAppsListApplicationSettingsResponse,
+  WebAppsListApplicationSettingsSlotResponse,
+} from "@azure/arm-appservice/esm/models";
 
 export type Core = {
-  getInput: (s: string) => string;
+  getInput: (s: string, opts?: core.InputOptions) => string;
   setFailed: (err: Error) => void;
 };
 
@@ -28,6 +32,7 @@ export async function run({
   injectedCore,
 }: { injectedCore?: Core } = {}): Promise<void> {
   try {
+    core;
     const getParams = new GetParams({ core: injectedCore || core });
 
     const {
@@ -40,6 +45,7 @@ export async function run({
       clientID,
       applicationSecret,
       tenantID,
+      appSettings,
     } = await getParams.run();
 
     const { credentials } = await authenticate({
@@ -56,12 +62,45 @@ export async function run({
       {
         location: appLocation,
         enabled: true,
-        // cloningInfo: {
-        //   sourceWebAppId: `/subscriptions/${subscriptionID}/resourceGroups/${ressourceGroup}/providers/Microsoft.Web/sites/${appName}/slots/${configCloneSlotName}`,
-        // },
       },
       slotName
     );
+
+    let slotConfig:
+      | WebAppsListApplicationSettingsResponse
+      | WebAppsListApplicationSettingsSlotResponse
+      | undefined;
+
+    // Get config from slot
+    if (configCloneSlotName) {
+      slotConfig = await client.webApps.listApplicationSettingsSlot(
+        ressourceGroup,
+        appName,
+        configCloneSlotName
+      );
+    } else if (appSettings) {
+      // Get config from main slot only if we actually change the config
+      slotConfig = await client.webApps.listApplicationSettings(
+        ressourceGroup,
+        appName
+      );
+    }
+
+    // Apply the config only if we have something to change
+    if (slotConfig) {
+      slotConfig.properties = Object.assign(
+        {},
+        slotConfig.properties,
+        appSettings
+      );
+
+      await client.webApps.updateApplicationSettingsSlot(
+        ressourceGroup,
+        appName,
+        slotConfig,
+        slotName
+      );
+    }
 
     // const ms: string = core.getInput('milliseconds')
     // core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true

@@ -11,6 +11,7 @@ interface GetParamsResult {
   clientID: string;
   applicationSecret: string;
   tenantID: string;
+  appSettings?: { [key: string]: string };
 }
 
 export class GetParams extends Command<GetParamsResult> {
@@ -25,15 +26,25 @@ export class GetParams extends Command<GetParamsResult> {
   protected async execute(): Promise<GetParamsResult> {
     const core = this.core;
 
-    const slotName = core.getInput("slotName");
+    const slotName = core.getInput("slotName", { required: true });
     const configCloneSlotName = core.getInput("configCloneSlotName");
-    const subscriptionID = core.getInput("subscriptionID");
-    const ressourceGroup = core.getInput("ressourceGroup");
-    const appName = core.getInput("appName");
-    const appLocation = core.getInput("appLocation");
-    const clientID = core.getInput("clientID");
-    const applicationSecret = core.getInput("applicationSecret");
-    const tenantID = core.getInput("tenantID");
+    const subscriptionID = core.getInput("subscriptionID", { required: true });
+    const ressourceGroup = core.getInput("ressourceGroup", { required: true });
+    const appName = core.getInput("appName", { required: true });
+    const appLocation = core.getInput("appLocation", { required: true });
+    const clientID = core.getInput("clientID", { required: true });
+    const applicationSecret = core.getInput("applicationSecret", {
+      required: true,
+    });
+    const tenantID = core.getInput("tenantID", { required: true });
+    const rawAppSettings = core.getInput("appSettings");
+    let appSettings: { [key: string]: string };
+
+    try {
+      appSettings = JSON.parse(rawAppSettings);
+    } catch (err) {
+      throw new Error(`Invalid \`appSettings\` parameter: can't parse JSON`);
+    }
 
     return {
       slotName,
@@ -45,6 +56,7 @@ export class GetParams extends Command<GetParamsResult> {
       appName,
       clientID,
       tenantID,
+      appSettings,
     };
   }
 }

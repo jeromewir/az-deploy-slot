@@ -1,3 +1,4 @@
+import { snakeCase } from "snake-case";
 import * as core from "@actions/core";
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 import { WebSiteManagementClient } from "@azure/arm-appservice";
@@ -32,11 +33,10 @@ export async function run({
   injectedCore,
 }: { injectedCore?: Core } = {}): Promise<void> {
   try {
-    core;
     const getParams = new GetParams({ core: injectedCore || core });
 
     const {
-      slotName,
+      slotName: candidateSlotName,
       configCloneSlotName,
       subscriptionID,
       ressourceGroup,
@@ -53,6 +53,8 @@ export async function run({
       applicationSecret,
       tenantID,
     });
+
+    const slotName = snakeCase(candidateSlotName);
 
     const client = new WebSiteManagementClient(credentials, subscriptionID);
 

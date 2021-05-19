@@ -38,12 +38,14 @@ export class GetParams extends Command<GetParamsResult> {
     });
     const tenantID = core.getInput("tenantID", { required: true });
     const rawAppSettings = core.getInput("appSettings");
-    let appSettings: { [key: string]: string };
+    let appSettings: { [key: string]: string } | undefined;
 
-    try {
-      appSettings = JSON.parse(rawAppSettings);
-    } catch (err) {
-      throw new Error(`Invalid \`appSettings\` parameter: can't parse JSON`);
+    if (rawAppSettings) {
+      try {
+        appSettings = JSON.parse(rawAppSettings);
+      } catch (err) {
+        throw new Error(`Invalid \`appSettings\` parameter: can't parse JSON`);
+      }
     }
 
     return {

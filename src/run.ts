@@ -102,6 +102,21 @@ export async function run({
       );
     }
 
+    const publishProfileResponse = await client.webApps.listPublishingProfileXmlWithSecretsSlot(
+      ressourceGroup,
+      appName,
+      {},
+      slotName
+    );
+
+    const publishProfile = publishProfileResponse.readableStreamBody?.read();
+
+    if (!publishProfile) {
+      throw new Error(`Cannot retrieve publish profile`);
+    }
+
+    core.setOutput("PUBLISH_PROFILE", publishProfile.toString());
+
     // const ms: string = core.getInput('milliseconds')
     // core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     // core.debug(new Date().toTimeString())

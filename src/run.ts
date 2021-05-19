@@ -1,4 +1,4 @@
-import { snakeCase } from "snake-case";
+import { paramCase } from "change-case";
 import * as core from "@actions/core";
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 import { WebSiteManagementClient } from "@azure/arm-appservice";
@@ -54,7 +54,7 @@ export async function run({
       tenantID,
     });
 
-    const slotName = snakeCase(candidateSlotName);
+    const slotName = paramCase(candidateSlotName);
 
     const client = new WebSiteManagementClient(credentials, subscriptionID);
 

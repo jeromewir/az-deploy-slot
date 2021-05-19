@@ -28,7 +28,7 @@
     "@actions/core": "^1.2.6",
     "@azure/arm-appservice": "^8.0.0",
     "@azure/ms-rest-nodeauth": "^3.0.9",
-    "snake-case": "^3.0.4"
+    "change-case": "^4.1.2"
   },
   "devDependencies": {
     "@types/jest": "^26.0.15",

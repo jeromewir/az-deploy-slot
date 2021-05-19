@@ -117,9 +117,8 @@ export async function run({
       throw new Error(`Cannot retrieve publish profile`);
     }
 
-    // We add `TOKEN` so GH action hides the value
-    // https://github.com/actions/runner/issues/475#issuecomment-742271143
-    core.setOutput("PUBLISH_PROFILE_TOKEN", publishProfile.toString());
+    core.setOutput("PUBLISH_PROFILE", publishProfile.toString());
+    core.setSecret("PUBLISH_PROFILE");
     core.setOutput("SLOT_NAME", slotName);
 
     // const ms: string = core.getInput('milliseconds')

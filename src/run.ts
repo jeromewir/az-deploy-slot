@@ -125,7 +125,7 @@ export async function run({
     core.setOutput("SLOT_URL", `https://${slotResponse.hostNames![0]}`);
     core.setOutput(
       "SLOT_URLS",
-      slotResponse.hostNames?.map((h) => `https://${h}`).join(", ")
+      slotResponse.hostNames?.map((h) => `https://${h}`)
     );
   } catch (error) {
     (injectedCore || core).setFailed(error.message);

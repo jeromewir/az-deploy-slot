@@ -1,28 +1,63 @@
-import {wait} from '../src/wait'
-import * as process from 'process'
-import * as cp from 'child_process'
-import * as path from 'path'
+import { run } from "../src/run";
 
-test('throws invalid number', async () => {
-  const input = parseInt('foo', 10)
-  await expect(wait(input)).rejects.toThrow('milliseconds not a number')
-})
+// import { wait } from "../src/wait";
+// import * as process from "process";
+// import * as cp from "child_process";
+// import * as path from "path";
 
-test('wait 500 ms', async () => {
-  const start = new Date()
-  await wait(500)
-  const end = new Date()
-  var delta = Math.abs(end.getTime() - start.getTime())
-  expect(delta).toBeGreaterThan(450)
-})
+// test("throws invalid number", async () => {
+//   const input = parseInt("foo", 10);
+//   await expect(wait(input)).rejects.toThrow("milliseconds not a number");
+// });
 
-// shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
-  process.env['INPUT_MILLISECONDS'] = '500'
-  const np = process.execPath
-  const ip = path.join(__dirname, '..', 'lib', 'main.js')
-  const options: cp.ExecFileSyncOptions = {
-    env: process.env
-  }
-  console.log(cp.execFileSync(np, [ip], options).toString())
-})
+// test("wait 500 ms", async () => {
+//   const start = new Date();
+//   await wait(500);
+//   const end = new Date();
+//   var delta = Math.abs(end.getTime() - start.getTime());
+//   expect(delta).toBeGreaterThan(450);
+// });
+
+// // shows how the runner will run a javascript action with env / stdout protocol
+// test("test runs", () => {
+//   process.env["INPUT_MILLISECONDS"] = "500";
+//   const np = process.execPath;
+//   const ip = path.join(__dirname, "..", "lib", "main.js");
+//   const options: cp.ExecFileSyncOptions = {
+//     env: process.env,
+//   };
+//   console.log(cp.execFileSync(np, [ip], options).toString());
+// });
+
+jest.setTimeout(500000);
+
+test("Create", async () => {
+  let e: Error | undefined;
+
+  await run({
+    injectedCore: {
+      getInput: (s) => {
+        const values: { [key: string]: string } = {
+          slotName: "test",
+          configCloneSlotName: "staging",
+          subscriptionID: "",
+          ressourceGroup: "",
+          appName: "",
+          appLocation: "",
+          clientID: "",
+          applicationSecret: "",
+          tenantID: "",
+        };
+
+        const v: string = values[s] as string;
+
+        return v;
+      },
+      setFailed: (err) => {
+        e = err;
+      },
+    },
+  });
+
+  expect(e).toBeUndefined();
+});

@@ -58,6 +58,8 @@ export async function run({
 
     const client = new WebSiteManagementClient(credentials, subscriptionID);
 
+    core.info("Authenticated with azure");
+
     const slotResponse = await client.webApps.createOrUpdateSlot(
       ressourceGroup,
       appName,
@@ -67,6 +69,8 @@ export async function run({
       },
       slotName
     );
+
+    core.info(`Created slot ${slotName}`);
 
     let slotConfig:
       | WebAppsListApplicationSettingsResponse
@@ -102,6 +106,8 @@ export async function run({
         slotConfig,
         slotName
       );
+
+      core.info("Applied app settings");
     }
 
     const publishProfileResponse = await client.webApps.listPublishingProfileXmlWithSecretsSlot(
@@ -117,6 +123,8 @@ export async function run({
       throw new Error(`Cannot retrieve publish profile`);
     }
 
+    core.info("Retrieved publish profile");
+
     const publishProfileValue = publishProfile.toString();
 
     core.setSecret(publishProfileValue);
@@ -127,6 +135,8 @@ export async function run({
       "SLOT_URLS",
       slotResponse.hostNames?.map((h) => `https://${h}`)
     );
+
+    core.info("Success!");
   } catch (error) {
     (injectedCore || core).setFailed(error.message);
   }

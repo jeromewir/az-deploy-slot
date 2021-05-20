@@ -58,7 +58,7 @@ export async function run({
 
     const client = new WebSiteManagementClient(credentials, subscriptionID);
 
-    await client.webApps.createOrUpdateSlot(
+    const slotResponse = await client.webApps.createOrUpdateSlot(
       ressourceGroup,
       appName,
       {
@@ -122,6 +122,7 @@ export async function run({
     core.setSecret(publishProfileValue);
     core.setOutput("PUBLISH_PROFILE", publishProfileValue);
     core.setOutput("SLOT_NAME", slotName);
+    core.setOutput("SLOT_URL", slotResponse.hostNames![0]);
 
     // const ms: string = core.getInput('milliseconds')
     // core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true

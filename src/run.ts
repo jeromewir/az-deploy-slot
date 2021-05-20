@@ -122,14 +122,11 @@ export async function run({
     core.setSecret(publishProfileValue);
     core.setOutput("PUBLISH_PROFILE", publishProfileValue);
     core.setOutput("SLOT_NAME", slotName);
-    core.setOutput("SLOT_URL", slotResponse.hostNames![0]);
-
-    // const ms: string = core.getInput('milliseconds')
-    // core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    // core.debug(new Date().toTimeString())
-    // await wait(parseInt(ms, 10))
-    // core.debug(new Date().toTimeString())
-    // core.setOutput('time', new Date().toTimeString())
+    core.setOutput("SLOT_URL", `https://${slotResponse.hostNames![0]}`);
+    core.setOutput(
+      "SLOT_URLS",
+      slotResponse.hostNames?.map((h) => `https://${h}`).join(", ")
+    );
   } catch (error) {
     (injectedCore || core).setFailed(error.message);
   }
